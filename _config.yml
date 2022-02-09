@@ -1,0 +1,95 @@
+# Site settings
+title: It is ok to ask me... # site title
+description: >- # site description
+  AWS,Linux,Windows,networking,Metabase - tutorials,tips and tricks
+lang: en-US # default lang
+timezone: Europe/London # set your timezone
+image: assets/img/ogp.png # This image used for Open Graph more info https://ogp.me/
+repo:  # site repo [optional]
+mode: dark # default theme "dark" | "light"
+
+# Profile settings
+author:
+  name: Dawid Krysiak # author name
+  bio: >- # tell to the world
+    Staring at computer screens since 1985.
+    
+    Oficially (full time employment) started by supporting Windows 95osr2 and 98se office PCs, but begun a few years earlier by supporting i286 DOS PCs with Lantastic :)
+    Since then, supported both end-users and their PCs and servers on Windows and Linux.
+    Spent 9 years as a trainer and teacher.
+    Now focused on AWS cloud computing.
+  username: Dawid # general username
+  github: Grendel-DMK # github username
+  twitter:  # twitter username
+  facebook: # facebook username
+  email: dodgywebsites@krysiak.biz # email adress
+  avatar: /assets/img/avatar.jpg # change with your own avatar
+
+# URL settings
+url: "https://itisoktoask.me/" #
+baseurl:
+permalink: /:title/
+google_analytics: # leave it blank if not wish
+fb_appid:
+
+# Collection setting
+collections:
+  posts:
+    output: true
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: post
+      comments: false
+
+# Jekyll Compose default front matter
+jekyll_compose:
+  post_default_front_matter:
+    modified:
+    tags: []
+    description:
+  draft_default_front_matter:
+    modified:
+    tags: []
+    description:
+
+# Homepage limit posts
+number_of_posts: 20
+
+# Build settings
+# theme: klise
+sass:
+  style: compressed
+
+include:
+  - _redirects
+  - .htaccess
+
+exclude:
+  - CNAME
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - CHANGELOG.md
+  - README.md
+  - node_modules
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - lighthouse.png
+  - klise-*.gem
+  - klise.gemspec
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-postfiles
