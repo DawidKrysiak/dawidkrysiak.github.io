@@ -7,7 +7,6 @@ author: Dawid Krysiak
 tags: AWS EC2 SSM AWSConfig
 draft: false
 ---
-
 # Symptoms
 If you try to update SSM agent on an older instance with AWSConfig installed, SSM Agent will refuse to update, reporting issues caused by AWSConfig
 
