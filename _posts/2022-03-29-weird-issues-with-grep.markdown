@@ -1,8 +1,3 @@
----
-layout: post
-title: "Weird issues with grep when searching through logs"
----
-
 # Weird issue I've never seen before
 
 ## Symptoms
