@@ -1,3 +1,13 @@
+---
+layout: post
+title: Weird issues with grep over logs
+description: grep fails to grep over plain text logs
+date: 2022-03-29T20:10:00Z
+author: Dawid Krysiak
+tags: AWS EC2 Linux
+draft: false
+---
+
 # Weird issue I've never seen before
 
 ## Symptoms
