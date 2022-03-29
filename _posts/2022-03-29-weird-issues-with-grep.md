@@ -1,6 +1,6 @@
 ---
-layout: post
 title: "Weird issues with grep when searching through logs"
+layout: post
 date: 2021-11-30T19:05:00Z
 draft: false
 ---
