@@ -2,7 +2,7 @@
 layout: post
 title: AWS CloudWatch Insights - count visits from IP addresses
 description: if you have a log that contains the IP addresses of your visitors and you wish to calculate that, you can use CloudWatch Insights
-date: 2022-05-24T14:37:00Z
+date: 2022-05-24T01:42:00Z
 author: Dawid Krysiak
 tags: AWS EC2 CloudWatch security
 draft: false
