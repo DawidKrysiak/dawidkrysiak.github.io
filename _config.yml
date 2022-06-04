@@ -3,6 +3,7 @@ title: It is ok to ask me... # site title
 description: >- # site description
   AWS,Linux,Windows,networking,Metabase - tutorials,tips and tricks
 lang: en-US # default lang
+future: true
 timezone: Europe/London # set your timezone
 image: assets/img/ogp.png # This image used for Open Graph more info https://ogp.me/
 repo:  # site repo [optional]
