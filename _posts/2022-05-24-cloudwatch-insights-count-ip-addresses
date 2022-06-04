@@ -21,7 +21,7 @@ fields @message
 | filter requestCount >5
 ```
 
-## let's breat it down
+## let's break it down
 * first line selects the fields (in this case, just the body of the message
 * second line filters out the lines that are relevant in this case - containing `POST "/registration` string
 * third line filters the remaining lines by looking for an regex matching the IP address format
