@@ -1,0 +1,5 @@
+fields @timestamp, @message
+| sort @timestamp desc
+| parse @message /^.*Jobs - waiting:\s(?<@status>\d*)/
+| filter @status > 0
+| stat max(@status) by bin(1m)
