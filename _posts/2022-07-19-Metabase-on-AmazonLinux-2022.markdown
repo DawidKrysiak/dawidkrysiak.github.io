@@ -13,7 +13,7 @@ tags: metabase ec2 aws tutorial
 ## This tutorial covers deployment steps of Metabase system using Amazon Linux 2.
 
 ### Preface: 
-It's aa follow-up on the previous tutorial based on Amazon Linux 2.
+It's a follow-up to the previous tutorial based on Amazon Linux 2.
 AWS is about to release their AmazonLinux2022 AMI that comes with a few surprising choices.
 The most notable is the fact that they choose Fedora as the base system.
 From a console user that doesn't change much (apart from an inclination to use `dnf` rather than `yum` for package management). There are some interesting configuration choices as well - for example /tmp is mounted in RAM-disk which makes it absurdly fast but comes at a penalty of limited space. So if your software rely on thousands of files in /tmp (you know who you are :)) then you might want to consider remounting /tmp and disabling the service that keeps mounting it. More on that in another article soon.
@@ -31,6 +31,7 @@ Having the above in mind, the project comprise of:
 <li> MySQL server installed on the instance itself, not as RDS. But if you insist - RDS works just fine, MySQL/MariaDB and PostgreSQL, that's how I started, before I realized I'm burning cash. RDS in my specific case could be of benefit (as mentioned I have my own 'data source' that needs to be queried), but in usual situations - you will be querying other RDS systems ANYWAY.</li>
 <li>Metabase running as a SystemD service</li>
 </ul>
+
 ### Instance.
 Amazon Linux 2022 preview is available only in Oregon, so if you wish to deploy it in any other region, you have to copy the AMI. Instance type depends on your needs. In my case, **t2.micro** was sufficient during development, but even then, machine was left with 60MB of available RAM, so 2GB of RAM is absolute minimum if you have more than one user working on it (it will work with 1GB RAM + a bit of swap, but it will be horribly slow in regenerating graphs). I would say that **t2.small** is a good compromise, **t2.medium** should be plenty, unless you have dozens of users working at the same time. If you wish to save money on the project even further, consider if the system has to work 24/7 - maybe you have fixed working hours beyond which you can set up the maintenance window for updates/patching and then shut down the system overnight? Consider using Lambda functions for start/stop [GitHub](https://github.com/Grendel-DMK/aws-instance-stop)
 
@@ -38,7 +39,7 @@ While you are preparing the instance, you might just as well set up the Security
 <ul>
 <li>22 (for ssh access)</li>
 <li>306 (if you wish to access MySQL remotely rather than working on the instance itself all the time. In this case, I suggest locking down the access to a single IP rather than leaving it for 0/0. Or better yet, **don't open 3306 to the world at all**, and use SSH tunnel for your connection to MySQL [SSH tunnel for MySQL](https://itisoktoask.me/linux-useful-oneliners/#mysql-tunnel). Less stable, but surely more secure).</li>
-<li>3000 (that's the default Metabase port. Some people add nginx to the mix, to allow for 80/443 access, but I can list a few reasons why I don't bother, just give users a link with :3000 in it and you are sorted :) RAM saved, work spared :)</li>
+<li>3000 (that's the default Metabase port. Some people add nginx to the mix, to allow for 80/443 access, but I can list a few reasons why I don't bother, just give users a link with :3000 in it and you are sorted :) RAM saved, work spared :) of course, if you need a domain and SSL certificate, you either put more work into it, or engage ELB, it all depends on your needs</li>
 </ul>
 
 #### Add IAM Role to the instance
@@ -125,7 +126,7 @@ dnf update -y
 sudo dnf install -y mysql-community-server
 ```
 
-FAIL. Library I'm not familiar with. A bit of digging and found a package providing it.
+FAIL. Library I'm not familiar with is missing. A bit of digging and found a package providing it.
 
 ```
  yum install -iwget https://rpmfind.net/linux/fedora/linux/releases/35/Everything/x86_64/os/Packages/m/mecab-0.996-3.fc35.2.x86_64.rpm
@@ -207,7 +208,7 @@ wget https://downloads.metabase.com/v0.40.1/metabase.jar
 chown metabase:metabase metabase.jar
 ```
 
-Of course, in the future, make sure you download the latest version.
+**Of course, in the future, make sure you download the latest version.**
 
 
 ### Set up the service
