@@ -76,7 +76,7 @@ That was a very frustrating stage as AL2022 is not an official distro yet, so de
 ```
 yum install -y  https://dev.mysql.com/get/mysql80-community-release-fc35-3.noarch.rpm
 ```
-Ok, let's do yum update - FAIL - as mentioned above - distro doesn't exist and it's not advertising it as FedoraCore distro, so let's hack :)
+Ok, let's do yum update - FAIL - as mentioned above - distro doesn't exist and it's not advertising it as FedoraCore distro, so let's hack  the repo file to let it think it's FedoraCore35 :)
 
 edit the below with your editor of choice:
 ```
