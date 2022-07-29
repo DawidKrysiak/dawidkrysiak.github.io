@@ -16,12 +16,15 @@ Rather than a fixed entry in /etc/fstab, it uses a service to remount the /tmp a
 ```
 
 ## Benefits
+
 Tempfs is fast. Absurdly fast for something that looks like 'a storage'. The service definition mentioned above automatically allocates 50% of RAM as possible storage.
 
 ## Drawbacks
+
 If your software depends on a large volume of temporary files, you have to carefully measure the performance -  if you fill in the /tmp with your files, and the demand for RAM from application raises, system will start using swap and that will obviously have a massive impact on performance
 
 ## How to disable it
+
 As mentioned earlier, it's mounted after each reboot via a service, so it is as simple as stopping the service and then disabling it.
 
 ```
