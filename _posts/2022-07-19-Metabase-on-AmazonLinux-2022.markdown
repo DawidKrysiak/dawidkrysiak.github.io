@@ -5,7 +5,7 @@ tagline: "Metabase installation on AWS Amazon Linux 2"
 description: Metabase installation and configuration on AWS Amazon Linux 2 EC2 instance. Step by step tutorial
 url: itisoktoask.me
 author: Dawid 'Grendel' Krysiak 
-date: 2021-07-27T20:06:00Z
+date: 2022-07-27T20:06:00Z
 draft: false
 tags: metabase ec2 aws tutorial
 ---
@@ -15,7 +15,7 @@ tags: metabase ec2 aws tutorial
 It's a follow-up to the previous tutorial based on Amazon Linux 2.
 AWS is about to release their AmazonLinux2022 AMI that comes with a few surprising choices.
 The most notable is the fact that they choose Fedora as the base system.
-From a console user that doesn't change much (apart from an inclination to use `dnf` rather than `yum` for package management). There are some interesting configuration choices as well - for example /tmp is mounted in RAM-disk which makes it absurdly fast but comes at a penalty of limited space. So if your software rely on thousands of files in /tmp (you know who you are :)) then you might want to consider remounting /tmp and disabling the service that keeps mounting it. More on that in another article soon.
+From a 'console user'-perspective, that doesn't change much (apart from an inclination to use `dnf` rather than `yum` for package management). There are some interesting configuration choices as well - for example /tmp is mounted in RAM-disk which makes it absurdly fast but comes at a penalty of limited space. So if your software rely on thousands of files in /tmp (you know who you are :)) then you might want to consider remounting /tmp and disabling the service that keeps mounting it. More on that in another article soon.
 
 Now to the fun part - deploy Metabase on AmazonLinux 2022. The below is 90% copy of the previous article with appropriate changes for the new release. Enjoy.
 
