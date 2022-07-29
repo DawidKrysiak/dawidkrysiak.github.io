@@ -8,9 +8,12 @@ It's visible in `df` as a separate device
 /dev/xvda1      8.0G  4.2G  3.9G  52% /
 tmpfs           986M     0  986M   0% /tmp
 ```
+
 Rather than a fixed entry in /etc/fstab, it uses a service to remount the /tmp after a reboot
 
-```/usr/lib/systemd/system/tmp.mount```
+```
+/usr/lib/systemd/system/tmp.mount
+```
 
 ## Benefits
 Tempfs is fast. Absurdly fast for something that looks like 'a storage'. The service definition mentioned above automatically allocates 50% of RAM as possible storage.
@@ -33,8 +36,4 @@ sudo mkdir /tmp
 sudo chmod 1777 /tmp
 ```
 
-make sure /tmp as a separate device
-
-```
-df -h
-```
+test:  `df -h` should show you no /tmp as a separate mountpoint.
