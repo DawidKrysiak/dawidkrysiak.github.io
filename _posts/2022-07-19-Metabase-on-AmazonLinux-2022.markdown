@@ -37,7 +37,7 @@ Amazon Linux 2022 preview is available only in Oregon, so if you wish to deploy 
 While you are preparing the instance, you might just as well set up the SecurityGroup at the same time.
 <ul>
 <li>22 (for ssh access)</li>
-<li>306 (if you wish to access MySQL remotely rather than working on the instance itself all the time. In this case, I suggest locking down the access to a single IP rather than leaving it for 0/0. Or better yet, **don't open 3306 to the world at all**, and use SSH tunnel for your connection to MySQL [SSH tunnel for MySQL](https://itisoktoask.me/linux-useful-oneliners/#mysql-tunnel). Less stable, but surely more secure).</li>
+<li>3306 (if you wish to access MySQL remotely rather than working on the instance itself all the time. In this case, I suggest locking down the access to a single IP rather than leaving it for 0/0. Or better yet, **don't open 3306 to the world at all**, and use SSH tunnel for your connection to MySQL [SSH tunnel for MySQL](https://itisoktoask.me/linux-useful-oneliners/#mysql-tunnel). Less stable, but surely more secure).</li>
 <li>3000 (that's the default Metabase port. Some people add nginx to the mix, to allow for 80/443 access, but I can list a few reasons why I don't bother, just give users a link with :3000 in it and you are sorted :) RAM saved, work spared :) of course, if you need a domain and SSL certificate, you either put more work into it, or engage ELB, it all depends on your needs</li>
 </ul>
 
