@@ -95,4 +95,4 @@ plugins:
   - jekyll-sitemap
   - jekyll-postfiles
 
-theme: jekyll-theme-minimal
+theme: jekyll-theme-architect
