@@ -128,7 +128,7 @@ sudo dnf install -y mysql-community-server
 FAIL. Library I'm not familiar with is missing. A bit of digging and found a package providing it.
 
 ```
- yum install -iwget https://rpmfind.net/linux/fedora/linux/releases/35/Everything/x86_64/os/Packages/m/mecab-0.996-3.fc35.2.x86_64.rpm
+ yum install -y wget https://rpmfind.net/linux/fedora/linux/releases/35/Everything/x86_64/os/Packages/m/mecab-0.996-3.fc35.2.x86_64.rpm
 ```
 
 OK, let's try again.
