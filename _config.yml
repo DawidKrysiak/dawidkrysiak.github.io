@@ -5,7 +5,7 @@ description: >- # site description
 lang: en-US # default lang
 future: true
 timezone: Europe/London # set your timezone
-image: assets/img/ogp.png # This image used for Open Graph more info https://ogp.me/
+image: assets/img/avatar.jpg
 repo:  # site repo [optional]
 mode: dark # default theme "dark" | "light"
 
