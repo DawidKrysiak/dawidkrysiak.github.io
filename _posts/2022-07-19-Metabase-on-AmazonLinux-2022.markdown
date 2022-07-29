@@ -9,7 +9,6 @@ date: 2021-07-27T20:06:00Z
 draft: false
 tags: metabase ec2 aws tutorial
 ---
-# Metabase on Amazon Linux 2022
 ## This tutorial covers deployment steps of Metabase system using Amazon Linux 2022.
 
 ### Preface: 
