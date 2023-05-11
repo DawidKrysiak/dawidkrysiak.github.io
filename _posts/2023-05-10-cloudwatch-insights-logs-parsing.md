@@ -30,3 +30,4 @@ fields @message, @timestamp
 
 result:
 loginPage: 100000
+
