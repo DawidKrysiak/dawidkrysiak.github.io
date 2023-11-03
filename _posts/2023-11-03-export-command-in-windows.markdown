@@ -43,3 +43,30 @@ Microsoft.PowerShell_profile.ps1
 notepad $Profile
 ```
 
+
+```
+
+# Powershell function to convert the guardian user 
+# credential "export" format into powershell environment variables
+
+# How to import into your powershell
+# 1. Open the Modules folder and create a folder in there named 'export'
+#     C:\Users\USER_NAME\Documents\WindowsPowerShell\Modules\export
+# 2. copy this file into the modules folder 
+#     C:\Users\USER_NAME\Documents\WindowsPowerShell\Modules\export\export.psm1
+# 3. Start a new powershell session and enjoy
+
+Function export{
+    Param ($linuxExport)
+        try {
+            $CharArray =$linuxExport.Split("=")
+            [Environment]::SetEnvironmentVariable( $CharArray[0], $CharArray[1])
+            $var = $CharArray[0]
+            "Environment Variable Set - $var"   | write-host -fore green; 
+          }
+          catch {
+          "Expected: export variable=value"  | write-host -fore red; 
+         }
+    }
+```
+
