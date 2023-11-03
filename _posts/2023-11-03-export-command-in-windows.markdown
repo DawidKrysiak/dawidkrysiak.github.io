@@ -20,42 +20,31 @@ In PowerShell (not the classic CLI!)
 Test-Path $PROFILE
 ```
 The expected result is `False`, if it returns `True` you already have a profile set up!
-
 ## Create a profile (-Force recreates the profile if one already exists)
-
 ```
 New-Item –Path $Profile –Type File –Force
 ```
-
 ## Create a module
 The above command should have printed out the path to your PowerShell profile
-
+**NOTE: for some reason, different versions of powershell might create a different folder name. I know of WindowsPowerShell and Powershell, so be vigilant and adjust the following cooands accordingly.**
 ```
-Directory: C:\Users\user\Documents\WindowsPowerShell
+Directory: C:\Users\<user>\Documents\WindowsPowerShell
 
 Microsoft.PowerShell_profile.ps1
 ```
+##  create modules folder
+```
+cd C:\Users\<user>\Documents\Powershell
+mkdir modules
+cd modules
+mkdir export
+cd export
+notepad export.psm1
+```
 
-
-## edit the profile
+paste the below code to the file and save
 
 ```
-notepad $Profile
-```
-
-
-```
-
-# Powershell function to convert the guardian user 
-# credential "export" format into powershell environment variables
-
-# How to import into your powershell
-# 1. Open the Modules folder and create a folder in there named 'export'
-#     C:\Users\USER_NAME\Documents\WindowsPowerShell\Modules\export
-# 2. copy this file into the modules folder 
-#     C:\Users\USER_NAME\Documents\WindowsPowerShell\Modules\export\export.psm1
-# 3. Start a new powershell session and enjoy
-
 Function export{
     Param ($linuxExport)
         try {
@@ -69,4 +58,15 @@ Function export{
          }
     }
 ```
+## test
+Exit the current PowerShell session and open another one.
+execute export command
 
+```
+export
+```
+the result sould be
+
+```
+Expected: export variable=value
+```
