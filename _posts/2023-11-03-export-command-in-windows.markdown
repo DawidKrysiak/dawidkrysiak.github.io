@@ -10,9 +10,6 @@ tags: Windows Linux
 draft: false
 ---
 
-
-# `export` command in PowerShell
-
 ## check if you have a PowerShell profile set up.
 
 In PowerShell (not the classic CLI!)
