@@ -23,7 +23,7 @@ New-Item –Path $Profile –Type File –Force
 ```
 ## Create a module
 The above command should have printed out the path to your PowerShell profile
-**NOTE: for some reason, different versions of powershell might create a different folder name. I know of WindowsPowerShell and Powershell, so be vigilant and adjust the following cooands accordingly.**
+**NOTE: for some reason, different versions of powershell might create a different folder name. I know of WindowsPowerShell and Powershell, so be vigilant and adjust the following commands accordingly.**
 ```
 Directory: C:\Users\<user>\Documents\WindowsPowerShell
 
@@ -62,7 +62,7 @@ execute export command
 ```
 export
 ```
-the result sould be
+the result should be
 
 ```
 Expected: export variable=value
