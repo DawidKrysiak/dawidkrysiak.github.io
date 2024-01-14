@@ -18,7 +18,7 @@ In many sections, you'll find a copy/paste solution to a real-world problem I ha
   
 In no particular order:  
 [Networking](./Networking.md)  
-[Linux Operating System](./Linux%20Operating%20System.md)  
+[Linux Operating System](./OperatingSystems/Linux/Linux%20Operating%20System.md)  
 [Security and Compliance programmes](Security%20and%20Compliance%20programmes.md)  
 [Virtualisation and Cloud](Virtualisation%20and%20Cloud.md)  
 [Databases Ops](Databases%20Ops.md)  
