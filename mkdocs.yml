@@ -53,7 +53,7 @@ plugins:
   - roamlinks
   - blog
   - rss:
-      match_path: blog/posts/.* 
+      match_path: docs/.* 
       date_from_meta:
         as_creation: date
       categories:
