@@ -1,9 +1,9 @@
 ---  
-share: "true"  
+share: "false"  
 ---  
   
   
   
 Kernel functions  
   
-[Kernel compilation](./Kernel%20compilation.md)  
+[kernel-compilation](./kernel-compilation.md)  
