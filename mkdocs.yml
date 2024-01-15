@@ -567,15 +567,10 @@ nav:
 
 plugins:
   - search
-  - exclude-search:
-      exclude: [newsletter/*]
   - autolinks
-  - git-revision-date-localized:
-      type: timeago
   - minify:
       minify_html: true
   - section-index
-  - mkdocs-newsletter
 
 markdown_extensions:
   - abbr
