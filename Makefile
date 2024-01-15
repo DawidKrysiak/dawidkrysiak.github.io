@@ -3,6 +3,7 @@
 .PHONY: install
 install:
 	pdm install
+	pdm init
 
 .PHONY: update
 update:
