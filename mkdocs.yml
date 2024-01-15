@@ -1,5 +1,8 @@
 site_name: itisoktoask.me
 site_url: https://itisoktoask.me/
+nav:
+  - Home: index.md
+  - About: about.md
 
 theme:
     name: 'material'
