@@ -4,27 +4,7 @@ nav:
   - Home: index.md
   - About: about.md
 
-theme:
-    name: 'readthedocs'
-    palette:
-
-    # Light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: pink
-      accent: indigo
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-
-    # Dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: pink
-      accent: blue
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
+theme: 'readthedocs'
 
 # Extensions
 markdown_extensions:
@@ -48,9 +28,6 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-
-  - toc:
-      permalink: true
 
 plugins:
   - search
