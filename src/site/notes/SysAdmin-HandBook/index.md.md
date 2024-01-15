@@ -16,12 +16,7 @@ There WILL be a lot of ambiguities and overlaps (e.g networking tools could be c
 In many sections, you'll find a copy/paste solution to a real-world problem I had to resolve, or just barely-coherent notes that I used to prepare myself for certification.
 
 In no particular order:
-[[SysAdmin-HandBook/Networking/index.md\|SysAdmin-HandBook/Networking/index.md]]
-[[SysAdmin-HandBook/OperatingSystems/Linux/linux-operating-system\|linux-operating-system]]
-[[Security and Compliance programmes\|Security and Compliance programmes]]
-[[Virtualisation and Cloud\|Virtualisation and Cloud]]
-[[Databases Ops\|Databases Ops]]
-[[Code\|Code]]
-[[Encryption / Certificates\|Encryption / Certificates]]
-
-
+[[SysAdmin-HandBook/Networking/index.md\|Networking]]
+[[SysAdmin-HandBook/OperatingSystems/index.md\|Operating Systems]]
+[[SysAdmin-HandBook/Databases/index.md\|Databases]]
+[[SysAdmin-HandBook/AWS/index.md\|AWS]]
