@@ -1,4 +1,5 @@
-site_name: obsidian-mkdocs template
+site_name: itisoktoask.me
+site_url: https://itisoktoask.me/
 
 theme:
     name: 'material'
