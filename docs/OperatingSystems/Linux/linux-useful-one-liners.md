@@ -1,10 +1,10 @@
 ---
-share: "true"
 date: 2021-11-12T19:05:00Z
 tags:
   - Linux
   - Bash
 draft: false
+dg-publish: true
 ---
 
 ---

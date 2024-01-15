@@ -6,11 +6,9 @@ description: Tutorial on how to implement Linux export command in Windows PowerS
 url: itisoktoask.me
 date: 2023-11-04T15:42:00Z
 author: Dawid Krysiak
-tags:
-  - Windows
-  - Linux
+tags: Windows,Linux
 draft: false
-share: "true"
+dg-publish: true
 ---
 
 ## check if you have a PowerShell profile set up.

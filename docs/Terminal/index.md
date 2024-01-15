@@ -1,6 +1,6 @@
 ---
 share: true
 date: 2024-01-14
-draft: true
+title: Terminal tips and tricks
 dg-publish: true
 ---

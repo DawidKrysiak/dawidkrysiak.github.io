@@ -4,10 +4,10 @@ title: Stop using Elastic IPs
 description: Elastic IPs are useful but will cost you if not attached to a running instance. Use dynamically updated Route53 records instead.
 date: 2021-12-16T06:42:00Z
 author: Dawid Krysiak
-tags:
-  - AWS
+tags: AWS
 draft: false
-share: "true"
+share: true
+dg-publish: true
 ---
 
 ## Elastic IP is useful but... (gotcha!)

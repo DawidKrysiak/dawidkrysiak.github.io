@@ -3,12 +3,9 @@ layout: post
 title: Windows related useful oneliners
 description: copy-paste one-liners for windows
 date: 2021-11-12T19:05:00Z
-tags:
-  - windows
-  - microsoft
-  - tips
+tags: windows,microsoft,tips
 draft: false
-share: "true"
+dg-publish: true
 ---
 
 ### Windows reboot if there is no access to the graphical interface

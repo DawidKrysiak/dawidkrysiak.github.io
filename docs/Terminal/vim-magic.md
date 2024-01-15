@@ -4,14 +4,10 @@ title: Vim magic
 description: vim most useful commands. The aim is to get rid of vscode/codium/GUI IDEs and be able to work in the terminal
 date: 2022-01-02T18:40:00Z
 author: Dawid Krysiak
-tags:
-  - vim
-  - Linux
-  - GNU
-  - windows
-  - macos
+tags: vim,Linux,GNU,windows,macos
 draft: false
-share: "true"
+share: true
+dg-publish: true
 ---
 ## Why it's here, there are so many tutorials online?
 I decided to give it a go and ditch visual IDEs completely. Trying to make neovim my primary text editor / IDE. Keeping the notes here, just in case I need a cheat sheet.

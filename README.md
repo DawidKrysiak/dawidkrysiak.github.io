@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-# Digital Obsidian Garden
-This is the template to be used together with the [Digital Garden Obsidian Plugin](https://github.com/oleeskild/Obsidian-Digital-Garden). 
-See the README in the plugin repo for information on how to set it up.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/oleeskild/digitalgarden)
-
----
-## Docs
-Docs are available at [dg-docs.ole.dev](https://dg-docs.ole.dev/)
-=======
 # [The Blue Book](https://lyz-code.github.io/blue-book)
 
 This is my personal wiki where I share everything
@@ -34,4 +23,3 @@ can I fulfill any item of my [wish list](https://lyz-code.github.io/blue-book/pr
 other projects](https://lyz-code.github.io/blue-book/projects/projects/).
 
 [![CC0](https://img.shields.io/badge/license-CC0-0a0a0a.svg?style=flat&colorA=0a0a0a)](https://creativecommons.org/publicdomain/zero/1.0/)
->>>>>>> 8ad48e0 (try again)

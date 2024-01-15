@@ -7,7 +7,7 @@ tags:
   - aws
   - macos
   - ec2
-share: "true"
+dg-publish: true
 ---
 
 

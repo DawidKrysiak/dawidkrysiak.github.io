@@ -6,8 +6,7 @@ author: Dawid Krysiak
 tags:
   - Linux
   - Bash
-draft: false
-share: "true"
+dg-publish: true
 ---
 
 # How to ensure your Linux-based EC2 instance is updated

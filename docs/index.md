@@ -1,4 +1,9 @@
-
+---
+title: SysAdmin Handbook
+date: 2024-01-14
+dg-home: true
+dg-publish: true
+---
 
 This page is a set of notes on the broad subject of 'sysadmin work'.
 
@@ -13,12 +18,8 @@ There WILL be a lot of ambiguities and overlaps (e.g networking tools could be c
 In many sections, you'll find a copy/paste solution to a real-world problem I had to resolve, or just barely-coherent notes that I used to prepare myself for certification.
 
 In no particular order:
-[[SysAdmin-HandBook/Networking/index.md]]
-[[linux-operating-system]]
-[[Security and Compliance programmes]]
-[[Virtualisation and Cloud]]
-[[Databases Ops]]
-[[Code]]
-[[Encryption / Certificates]]
-
-
+[[SysAdmin-HandBook/Networking/index|Networking]]
+[[SysAdmin-HandBook/OperatingSystems/index|Operating Systems]]
+[[SysAdmin-HandBook/Databases/index|Databases]]
+[[SysAdmin-HandBook/AWS/index|AWS]]
+[[SysAdmin-HandBook/Terminal/index|Terminal]]

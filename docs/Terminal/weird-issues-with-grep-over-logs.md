@@ -12,7 +12,7 @@ tags:
   - Bash
   - terminal
 draft: false
-share: "true"
+dg-publish: true
 ---
 
 # Weird issue I've never seen before

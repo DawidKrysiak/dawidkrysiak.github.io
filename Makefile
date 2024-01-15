@@ -3,13 +3,13 @@
 .PHONY: install
 install:
 	pdm install
-	pdm init
 
 .PHONY: update
 update:
 	@echo "-------------------------"
 	@echo "- Updating dependencies -"
 	@echo "-------------------------"
+
 	pdm update --no-sync
 	pdm sync --clean
 

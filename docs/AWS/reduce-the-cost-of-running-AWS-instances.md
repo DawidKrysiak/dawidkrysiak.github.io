@@ -4,11 +4,8 @@ title: Lower the cost of AWS EC2
 description: uptime control of EC2 and RDS instances to save cost. Python based AWS Lambda function
 date: 2021-12-23 21:31:46 +0000
 categories: AWS
-tags:
-  - aws
-  - ec2
-  - rds
-share: "true"
+tags: aws,ec2,rds
+dg-publish: true
 ---
 
 
