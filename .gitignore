@@ -1,2 +1,2 @@
-site
-.pdm-python
+.vscode/settings.json
+.obsidian/*
