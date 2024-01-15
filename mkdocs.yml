@@ -567,7 +567,6 @@ nav:
 
 plugins:
   - search
-  - autolinks
   - minify:
       minify_html: true
   - section-index
