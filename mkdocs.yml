@@ -32,7 +32,6 @@ markdown_extensions:
 plugins:
   - search
   - roamlinks
-  - blog
   - rss:
       match_path: docs/.* 
       date_from_meta:
