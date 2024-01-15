@@ -5,7 +5,7 @@ nav:
   - About: about.md
 
 theme:
-    name: 'material'
+    name: 'readthedocs'
     palette:
 
     # Light mode
