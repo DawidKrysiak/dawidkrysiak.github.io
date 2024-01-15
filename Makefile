@@ -9,7 +9,6 @@ update:
 	@echo "-------------------------"
 	@echo "- Updating dependencies -"
 	@echo "-------------------------"
-	pdm init
 	pdm update --no-sync
 	pdm sync --clean
 
