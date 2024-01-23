@@ -1,0 +1,2320 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Metabase installation and configuration on AWS Amazon Linux 2 EC2 instance. Step by step tutorial">
+      
+      
+        <meta name="author" content="Dawid 'Grendel' Krysiak">
+      
+      
+      
+        <link rel="prev" href="../Amazon-Linux-2023-lessons-learned-so-far/">
+      
+      
+        <link rel="next" href="../Metabase-on-EC2-Amazon-Linux-2022-2023/">
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+    
+    
+      
+        <title>Metabase on EC2 Amazon Linux 2 - tutorial - obsidian-mkdocs template</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#metabase-on-amazon-linux-2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="obsidian-mkdocs template" class="md-header__button md-logo" aria-label="obsidian-mkdocs template" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            obsidian-mkdocs template
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Metabase on EC2 Amazon Linux 2 - tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="pink" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="obsidian-mkdocs template" class="md-nav__button md-logo" aria-label="obsidian-mkdocs template" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    obsidian-mkdocs template
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Obsidian Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            AWS
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is AWS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWS-CloudFront-function-to-redirect-empty-document-requests-to-index.html/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudFront function to redirect empty document requests to index.html
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWS-CloudWatch-Insights-count-visits-from-IP-addresses/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS CloudWatch Insights - count visits from IP addresses
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWS-CloudWatch-Insights-to-analyse-apache-nginx-api-calls/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS CloudWatch Insights to analyse apache nginx api calls
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWSConfig-generating-cost-while-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Config generating cost while 'disabled'
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Amazon-Linux-2022-2023-tempfs-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Linux 2022, 2023 tempfs configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Amazon-Linux-2023-lessons-learned-so-far/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Linux 2023 what every sysadmin should know
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Metabase on EC2 Amazon Linux 2 - tutorial
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Metabase on EC2 Amazon Linux 2 - tutorial
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#this-tutorial-covers-deployment-steps-of-metabase-system-using-amazon-linux-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      This tutorial covers deployment steps of Metabase system using Amazon Linux 2.
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="This tutorial covers deployment steps of Metabase system using Amazon Linux 2.">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preface:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Instance.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mysql" class="md-nav__link">
+    <span class="md-ellipsis">
+      MySQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metabase-user-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metabase user setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java installation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metabase-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metabase download
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-up-the-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set up the service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#there-are-some-useful-tips-that-got-me-through-my-stumbles" class="md-nav__link">
+    <span class="md-ellipsis">
+      There are some useful tips that got me through my stumbles.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Metabase-on-EC2-Amazon-Linux-2022-2023/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metabase on EC2 Amazon Linux 2022 - tutorial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SSM-agent-update-fails-due-to-AWS-Config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSM agent update fails due to AWS Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reduce-the-cost-of-running-AWS-instances/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lower the cost of AWS EC2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Analytics
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_12">
+            <span class="md-nav__icon md-icon"></span>
+            Analytics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/AWS-Clean-Rooms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Clean Rooms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-AppFlow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon AppFlow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-Athena/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Athena
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-CloudSearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudSearch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-EMR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon EMR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/index.md/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index.md
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_13" id="__nav_2_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_13">
+            <span class="md-nav__icon md-icon"></span>
+            Migration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/aws-application-discovery-service/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Application Discovery Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Databases/MySQL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MySQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Features/LaTeX%20Math%20Support/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LaTeX Math Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Features/Mermaid%20Diagrams/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mermaid diagrams
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Features/Text%20Formatting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text Formatting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Networking
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Networking
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Networking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    OperatingSystems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            OperatingSystems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Advanced-FileSystem-operations-partitioning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced FileSystem operations partitioning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/kernel-compilation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kernel compilation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            Linux
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Apple-Mac-keyboard-on-Linux/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Apple Mac keyboard on Linux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Basic-FileSystem-operations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic FileSystem operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/FileSystem-Structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FileSystem Structure
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/FileSystem/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FileSystem
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Kernel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kernel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Shell/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Stop%20using%20Elastic%20IPs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Stop using Elastic IPs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/how-to-keep-Linux-system-updated/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Automate Linux updates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/linux-operating-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linux Operating system
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/linux-useful-one-liners/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linux useful one liners
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    MacOS
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            MacOS
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/MacOS/CloudWatch%20agent%20on%20MacOS/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch agent on MacOS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_6" id="__nav_6_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Windows
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_6">
+            <span class="md-nav__icon md-icon"></span>
+            Windows
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Windows/Export%20command%20in%20Windows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How to implement export command from Linux in Windows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Windows/Windows%20useful%20one-liners/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Windows related useful oneliners
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Terminal
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Terminal
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Terminal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Terminal tips and tricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Terminal/vim-magic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vim magic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Terminal/weird-issues-with-grep-over-logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Weird issues with grep over logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Topic 1
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Topic 1
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Topic%201/Note%201/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Topic%201/Note%202/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#this-tutorial-covers-deployment-steps-of-metabase-system-using-amazon-linux-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      This tutorial covers deployment steps of Metabase system using Amazon Linux 2.
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="This tutorial covers deployment steps of Metabase system using Amazon Linux 2.">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preface:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Instance.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mysql" class="md-nav__link">
+    <span class="md-ellipsis">
+      MySQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metabase-user-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metabase user setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java installation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metabase-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metabase download
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-up-the-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set up the service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#there-are-some-useful-tips-that-got-me-through-my-stumbles" class="md-nav__link">
+    <span class="md-ellipsis">
+      There are some useful tips that got me through my stumbles.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="metabase-on-amazon-linux-2">Metabase on Amazon Linux 2<a class="headerlink" href="#metabase-on-amazon-linux-2" title="Permanent link">&para;</a></h1>
+<h2 id="this-tutorial-covers-deployment-steps-of-metabase-system-using-amazon-linux-2">This tutorial covers deployment steps of Metabase system using Amazon Linux 2.<a class="headerlink" href="#this-tutorial-covers-deployment-steps-of-metabase-system-using-amazon-linux-2" title="Permanent link">&para;</a></h2>
+<h3 id="preface">Preface:<a class="headerlink" href="#preface" title="Permanent link">&para;</a></h3>
+<p>I started this project with 'best practices as understood by Amazon' in mind - decoupled, scalable, fault resistant... And then realized, that I know a few really heavy production systems that don't have any of that and... function very well. With dozens of users working simultaneously. So as much as it's fun to deploy complicated infrastructure, it only benefits Amazon. Metabase database is tiny (less than 10MB?) my source of information - a single table with tens of thousands of rows - 20MB (in reality you will query other database sources that exist for their own purpose so your needs will be even smaller!) - why would I create a separate RDS (or two!) for that? With snapshots? Multi-AZ? Why would I bother with ElasticBeanstalk, and cloudforming it? The ONLY benefit is that Jeff has more money to pay his alimony (and for his space trips). Need this to be portable/redeployable? Just make an AMI after initial deployment (before any data sources are added to metabase), share it with regions/accounts you wish, deploy there (remember to chage the passwords :) ) - happy days. Cheap and easy solution. Spend your money on keeping regular snapshots, AMIs (e.g. properly set up AWS Backup!) and coffee, not on infastructure that serves no purpose other than some imaginary brownie points. If you insist of having a fancy infra, follow Metabase's own tutorial <a href="https://www.metabase.com/docs/latest/operations-guide/running-metabase-on-elastic-beanstalk.html">Metabase on ElasticBeanstalk</a> (which at the time of writing this tutorial, didn't actually worked for me).</p>
+<p>One thing that absolutely needs to happen is - the backbone database (which metabase uses to store user accounts, system settings, 'questions', graphs settings and so on) need to be moved away from the default file-based h2 format to a real database. <strong>H2 is not fit for any production purpose</strong>. And the developers of Metabase will agree with me - repeatedly, all over the place. <strong>DO NOT use the default H2 backbone for production</strong>. A crash (e.g. forceful kill of a process by <code>kill -9 pid</code> of the app (jar) while it's doing any updates to the tables <strong>WILL</strong> corrupt the data, and to my experience so far, <strong>NONE</strong> of the available tutorials work. <strong>EVER</strong> (yeah, ask me how I know :( ). Yes, H2 has 100% failure rate in my experience. The only solution is to start over or (if you are smart enough to have EBS snapshots every night :) ) to revert back the whole system.</p>
+<p>Having the above in mind, the project comprise of:</p>
+<ul>
+<li>a single EC2 instance</li>
+<li> MySQL server installed on the instance itself, not as RDS. But if you insist - RDS works just fine, MySQL/MariaDB and PostgreSQL, that's how I started, before I realized I'm burning cash. RDS in my specific case could be of benefit (as mentioned I have my own 'data source' that needs to be queried), but in usual situations - you will be querying other RDS systems ANYWAY.</li>
+<li>Metabase running as a SystemD service</li>
+</ul>
+<h3 id="instance">Instance.<a class="headerlink" href="#instance" title="Permanent link">&para;</a></h3>
+<p>Deploy an instance in the desired region. Instance type depends on your needs. In my case, <strong>t2.micro</strong> was sufficient during development, but even then, machine was left with 60MB of available RAM, so 2GB of RAM is absolute minimum if you have more than one user working on it (it will work with 1GB RAM + a bit of swap, but it will be horribly slow in regenerating graphs). I would say that <strong>t2.small</strong> is a good compromise, <strong>t2.medium</strong> should be plenty, unless you have dozens of users working at the same time. If you wish to save money on the project even further, consider if the system has to work 24/7 - maybe you have fixed working hours beyond which you can set up the maintenance window for updates/patching and then shut down the system overnight? Consider using Lambda functions for start/stop <a href="https://github.com/Grendel-DMK/aws-instance-stop">GitHub</a></p>
+<p>While you are preparing the instance, you might just as well set up the SecurityGroup at the same time.</p>
+<ul>
+<li>22 (for ssh access)</li>
+<li>306 (if you wish to access MySQL remotely rather than working on the instance itself all the time. In this case, I suggest locking down the access to a single IP rather than leaving it for 0/0. Or better yet, **don't open 3306 to the world at all**, and use SSH tunnel for your connection to MySQL [SSH tunnel for MySQL](https://itisoktoask.me/linux-useful-oneliners/#mysql-tunnel). Less stable, but surely more secure).</li>
+<li>3000 (that's the default Metabase port. Some people add nginx to the mix, to allow for 80/443 access, but I can list a few reasons why I don't bother, just give users a link with :3000 in it and you are sorted :) RAM saved, work spared :)</li>
+</ul>
+
+<p>Storage:
+I left it at the default 8GB ssd, after the deployment was done, <code>du</code> was at 63% and I don't see it growing very much over time (I introduced logrotate just in case, anticipating the logs being the biggest contributors to storage consumption).</p>
+<p>Add swapfile.</p>
+<div class="highlight"><pre><span></span><code>sudo fallocate -l 1G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile &amp;&amp; sudo swapon /swapfile
+</code></pre></div>
+<p>add to /etc/fstab to make swap mounted after reboot.</p>
+<div class="highlight"><pre><span></span><code>sudo echo &#39;/swapfile swap swap defaults 0 0&#39; &gt;&gt;/etc/fstab
+</code></pre></div>
+<h3 id="mysql">MySQL<a class="headerlink" href="#mysql" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sudo yum update -y
+sudo yum install mysql-community-server 
+sudo systemctl enable mysqld
+sudo systemctl start mysqld
+</code></pre></div>
+<p>Now the first moment that I got a bit confused - I don't have to deploy MySQL these days (I rather deploy an RDS and handover to customers to play with), so 'I missed the memo'. Some of the key processes has changed, so making note of it here.</p>
+<p>You don't just connect to mysql as root without password and set it up using a 'combo' 'grant all privileges...'</p>
+<div class="highlight"><pre><span></span><code>sudo grep &#39;temporary password&#39; /var/log/mysqld.log 
+</code></pre></div>
+<p>Make a note of the temporary root password generated by the installer.</p>
+<p><div class="highlight"><pre><span></span><code>sudo mysql_secure_installation 
+</code></pre></div>
+Use the password noted above, set a new one, remove anonymous users, decide if you require for root to be able to log in remotely (don't, use the tunnel instead, as mentioned earlier), reload permissions. Done.</p>
+<p>Connect to the MySQL console, create a new db - let's call it <code>backbone</code></p>
+<div class="highlight"><pre><span></span><code>CREATE DATABASE backbone;
+USE backbone;
+CREATE USER &#39;metabase&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;&lt;password&gt;&#39;;
+GRANT ALL ON backbone.* TO &#39;metabase&#39;@&#39;localhost&#39;;
+</code></pre></div>
+<h3 id="metabase-user-setup">Metabase user setup<a class="headerlink" href="#metabase-user-setup" title="Permanent link">&para;</a></h3>
+<p>Your instance (given how tiny the specs are) should be solely dedicated to metabase purpose, so the below method is a total overkill, you could run everything from the default ec2-user, but I believe it's a good practice to separate out the services and data from a default system login, to avoid accidental damage.</p>
+<div class="highlight"><pre><span></span><code>sudo adduser metabase
+sudo touch /var/log/metabase.log
+sudo chown syslog:adm /var/log/metabase.log
+sudo touch /etc/default/metabase
+</code></pre></div>
+<p>I made sure in /etc/passwd that my metabase user can't login to the system as a human :) </p>
+<div class="highlight"><pre><span></span><code>metabase:x:995:993::/home/metabase:/bin/false 
+</code></pre></div>
+<h3 id="java-installation">Java installation<a class="headerlink" href="#java-installation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sudo amazon-linux-extras install java-openjdk11
+</code></pre></div>
+<h3 id="metabase-download">Metabase download<a class="headerlink" href="#metabase-download" title="Permanent link">&para;</a></h3>
+<p>Admittedly I was working as root at this time, so make sure permissions are set right after.</p>
+<div class="highlight"><pre><span></span><code>cd /home/metabase/
+wget https://downloads.metabase.com/v0.40.1/metabase.jar
+chown metabase:metabase metabase.jar
+</code></pre></div>
+<p>Of course, in the future, make sure you download the latest version.</p>
+<h3 id="set-up-the-service">Set up the service<a class="headerlink" href="#set-up-the-service" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>touch /etc/systemd/system/metabase.service
+</code></pre></div>
+<p>Use your favourite text editor to add the following. Make sure the users (system and MySQL),password are set to what you set up in your system.
+You can also change the <strong>StandardOutput, StandardError</strong> variables to separate the messages to another file rather than dump everything into /var/log/messages
+I'm doing it this way, to make my life simpler. a. this instance's sole purpose is to run metabase + mysql, so I don't have to monitor multiple streams of possible errors b. when I set up the CloudWatch agent, I have a template to push out system logs already, don't have to fiddle with it to add metabase specific logs. One less thing to remember :). But of course - you do what suits your needs. </p>
+<div class="highlight"><pre><span></span><code>[Unit]
+Description=Metabase server
+
+[Service]
+Type=simple
+WorkingDirectory=/home/metabase
+User=metabase
+Group=metabase
+ExecStart=/bin/java -jar /home/metabase/metabase.jar
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=metabase
+Environment=MB_PASSWORD_COMPLEXITY=normal
+Environment=MB_PASSWORD_LENGTH=8
+Environment=MB_DB_TYPE=mysql
+Environment=MB_DB_DBNAME=backbone
+Environment=MB_DB_PORT=3306
+Environment=MB_DB_USER=&lt;user&gt;
+Environment=MB_DB_PASS=&lt;password&gt;
+Environment=MB_DB_HOST=&lt;host&gt;
+Environmen=MB_EMOJI_IN_LOGS=true
+</code></pre></div>
+<p>Moment of truth :). Start the service.</p>
+<div class="highlight"><pre><span></span><code>systemctl enable  metabase
+systemctl start metabase
+</code></pre></div>
+<p>Test.</p>
+<p><div class="highlight"><pre><span></span><code>ps aux | grep metabase
+</code></pre></div>
+You should see the process running. If you don't, check <code>/var/log/messages</code> - metabase should dump errors there. In my case it was MySQL permissions issues.
+If it's running, we are almost there, just one important test - check if metabase is using MySQL rather than h2. </p>
+<div class="highlight"><pre><span></span><code>sudo ls -lha /home/metabase
+</code></pre></div>
+<p>The only elements you should see is metabase.jar and plugins directory. If you see any <code>.db.</code> files, it means that the connection to MySQL was not picked up from the config and metabase defaulted to its built-in functionality. DO NOT LEAVE IT AS IS. Investigate, fix, remove the db files, try again. Don't 'let it be, should be fine' - you <strong>will</strong> regret later.</p>
+<h3 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h3>
+<p>It's time to log in to metabase - using a browser, go to  http://<IP>:3000/
+you should see the Metabase interface, go through the setup process, add your sources and have fun.</p>
+<h3 id="updates">Updates<a class="headerlink" href="#updates" title="Permanent link">&para;</a></h3>
+<p>Stop the service</p>
+<div class="highlight"><pre><span></span><code>systemctl stop metabase
+</code></pre></div>
+<p>Back up the current version</p>
+<div class="highlight"><pre><span></span><code>cd /home/metabase
+mv metabase.jar metabase_$(date +%d-%m-%Y).jar
+</code></pre></div>
+<p>Download the latest version to the same place</p>
+<div class="highlight"><pre><span></span><code>wget https://downloads.metabase.com/{latest-version}/metabase.jar
+</code></pre></div>
+<p>Start the service</p>
+<div class="highlight"><pre><span></span><code>systemctl start metabase
+</code></pre></div>
+<h3 id="there-are-some-useful-tips-that-got-me-through-my-stumbles">There are some useful tips that got me through my stumbles.<a class="headerlink" href="#there-are-some-useful-tips-that-got-me-through-my-stumbles" title="Permanent link">&para;</a></h3>
+<p>MySQL developers in their 'wisdom' decided to introduce certain settings that caused a lot of frustration.
+One of them was inability to do 'group by' in some scenarios.  I know I could rework the metabase 'questions', but life is too short for that.</p>
+<p>First, check the sql_mode by running this query:</p>
+<div class="highlight"><pre><span></span><code>SELECT @@sql_mode;
+</code></pre></div>
+<p>The result should be something like this:</p>
+<div class="highlight"><pre><span></span><code>ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+</code></pre></div>
+<p>Make a note of the values, you will be needing most of them.
+Edit my.cnf under [mysqld] section:</p>
+<p>sql_mode= (values from above, but remove ONLY_FULL_GROUP_BY)</p>
+<p>e.g. </p>
+<div class="highlight"><pre><span></span><code>sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo systemctl restart mysqld.service
+</code></pre></div>
+<p>(c) Dawid Krysiak https://itisoktoask.me/ </p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

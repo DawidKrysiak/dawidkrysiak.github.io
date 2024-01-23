@@ -1,0 +1,2278 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Using Jekyll,Gatsby or Hugo for static pages use URLs without index.html which works fine with s3 website (or any mainstream web server), but breaks on CloudFront. To fix this, you have to deploy a function that will redirect any empty request to index.html. This document was sitting for a long time in pull-request to the original repo, but since no one bothered to merge it, I might just as well publish it as my own post.">
+      
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../AWS-CloudWatch-Insights-count-visits-from-IP-addresses/">
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+    
+    
+      
+        <title>CloudFront function to redirect empty document requests to index.html - obsidian-mkdocs template</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#url-rewrite-to-append-indexhtml-to-the-uri-for-single-page-applications" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="obsidian-mkdocs template" class="md-header__button md-logo" aria-label="obsidian-mkdocs template" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            obsidian-mkdocs template
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CloudFront function to redirect empty document requests to index.html
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="pink" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="obsidian-mkdocs template" class="md-nav__button md-logo" aria-label="obsidian-mkdocs template" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    obsidian-mkdocs template
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Obsidian Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            AWS
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is AWS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    CloudFront function to redirect empty document requests to index.html
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    CloudFront function to redirect empty document requests to index.html
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#url-rewrite-to-append-indexhtml-to-the-uri-for-single-page-applications" class="md-nav__link">
+    <span class="md-ellipsis">
+      URL rewrite to append index.html to the URI for single page applications
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment steps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clone-the-official-aws-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clone the official AWS repo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test the function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-the-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publish the function.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-of-the-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration of the function.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-cloudfront-distribution-by-adding-etag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modify CloudFront distribution by adding ETag.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-the-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update the distribution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other considerations.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWS-CloudWatch-Insights-count-visits-from-IP-addresses/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS CloudWatch Insights - count visits from IP addresses
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWS-CloudWatch-Insights-to-analyse-apache-nginx-api-calls/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS CloudWatch Insights to analyse apache nginx api calls
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AWSConfig-generating-cost-while-disabled/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Config generating cost while 'disabled'
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Amazon-Linux-2022-2023-tempfs-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Linux 2022, 2023 tempfs configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Amazon-Linux-2023-lessons-learned-so-far/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Linux 2023 what every sysadmin should know
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Metabase-on%20EC2-Amazon-Linux-2-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metabase on EC2 Amazon Linux 2 - tutorial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Metabase-on-EC2-Amazon-Linux-2022-2023/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metabase on EC2 Amazon Linux 2022 - tutorial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SSM-agent-update-fails-due-to-AWS-Config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSM agent update fails due to AWS Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reduce-the-cost-of-running-AWS-instances/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lower the cost of AWS EC2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Analytics
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_12">
+            <span class="md-nav__icon md-icon"></span>
+            Analytics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/AWS-Clean-Rooms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Clean Rooms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-AppFlow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon AppFlow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-Athena/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Athena
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-CloudSearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudSearch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/Amazon-EMR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon EMR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analytics/index.md/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index.md
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_13" id="__nav_2_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_13">
+            <span class="md-nav__icon md-icon"></span>
+            Migration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/aws-application-discovery-service/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Application Discovery Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Databases/MySQL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MySQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Features/LaTeX%20Math%20Support/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LaTeX Math Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Features/Mermaid%20Diagrams/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mermaid diagrams
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Features/Text%20Formatting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text Formatting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Networking
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Networking
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Networking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    OperatingSystems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            OperatingSystems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Index
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Advanced-FileSystem-operations-partitioning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced FileSystem operations partitioning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/kernel-compilation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kernel compilation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            Linux
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Apple-Mac-keyboard-on-Linux/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Apple Mac keyboard on Linux
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Basic-FileSystem-operations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic FileSystem operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/FileSystem-Structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FileSystem Structure
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/FileSystem/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FileSystem
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Kernel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kernel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Shell/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shell
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/Stop%20using%20Elastic%20IPs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Stop using Elastic IPs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/how-to-keep-Linux-system-updated/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Automate Linux updates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/linux-operating-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linux Operating system
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Linux/linux-useful-one-liners/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linux useful one liners
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    MacOS
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            MacOS
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/MacOS/CloudWatch%20agent%20on%20MacOS/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch agent on MacOS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_6" id="__nav_6_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Windows
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_6">
+            <span class="md-nav__icon md-icon"></span>
+            Windows
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Windows/Export%20command%20in%20Windows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How to implement export command from Linux in Windows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OperatingSystems/Windows/Windows%20useful%20one-liners/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Windows related useful oneliners
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Terminal
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Terminal
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Terminal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Terminal tips and tricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Terminal/vim-magic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vim magic
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Terminal/weird-issues-with-grep-over-logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Weird issues with grep over logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Topic 1
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Topic 1
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Topic%201/Note%201/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Topic%201/Note%202/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#url-rewrite-to-append-indexhtml-to-the-uri-for-single-page-applications" class="md-nav__link">
+    <span class="md-ellipsis">
+      URL rewrite to append index.html to the URI for single page applications
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment steps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clone-the-official-aws-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clone the official AWS repo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test the function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-the-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publish the function.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-of-the-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration of the function.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-cloudfront-distribution-by-adding-etag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modify CloudFront distribution by adding ETag.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-the-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update the distribution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other considerations.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>CloudFront function to redirect empty document requests to index.html</h1>
+
+<h2 id="url-rewrite-to-append-indexhtml-to-the-uri-for-single-page-applications">URL rewrite to append index.html to the URI for single page applications<a class="headerlink" href="#url-rewrite-to-append-indexhtml-to-the-uri-for-single-page-applications" title="Permanent link">&para;</a></h2>
+<p>If you set up an s3 website serving content generated by Hugo or Jekyll, everything works fine, until you decide to use CloudFront to add SSL for example.
+The website breaks (Access Denied errors) as soon as you try to open the posts. The reason being that when you open <code>https://website.com/blog</code>, you are actually loading <code>https://website.com/blog/index.html</code>. You don't have to specify that document as the index.html is just default assumption that any web server should be dealing with automatically. Problem is, it doesn't work with CloudFront (because it is not a web server, neither is s3 and CF talks to the s3 bucket through REST API calls, not HTTP/S). Desperate users open their s3 buckets to the public, set up s3 website endpoint and accellerate that through CloudFront. But there is a better option.
+Amazon suggests to use a new shiny thing (as usual) - <a href="https://github.com/aws-samples/amazon-cloudfront-functions">CloudFront functions</a> and specifically <a href="https://github.com/aws-samples/amazon-cloudfront-functions/tree/main/url-rewrite-single-page-apps">url-rewrite-function</a>. </p>
+<p>But wait, I can hear you say 'but there is the default root object setting in CF!' - yes, there is, but it only applies to the root document (so https://website.com/index.html not website.com/.../index.html) <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DefaultRootObject.html">default root object</a></p>
+<h2 id="deployment-steps">Deployment steps<a class="headerlink" href="#deployment-steps" title="Permanent link">&para;</a></h2>
+<h3 id="clone-the-official-aws-repo">Clone the official AWS repo<a class="headerlink" href="#clone-the-official-aws-repo" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/aws-samples/amazon-cloudfront-functions.git
+</code></pre></div>
+<h3 id="create-function">Create function<a class="headerlink" href="#create-function" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cd amazon-cloudfront-functions
+
+aws cloudfront create-function --name url-rewrite-single-page-apps --function-config Comment=&quot;Function to redirect empty doc requests to index.html&quot;,Runtime=cloudfront-js-1.0 --function-code fileb://url-rewrite-single-page-apps/index.js
+</code></pre></div>
+<p>If the function was created correctly, the JSON output should look similar to this (make note of the ETag value, you'll need it in a second!):</p>
+<div class="highlight"><pre><span></span><code>{
+    &quot;Location&quot;: &quot;https://cloudfront.amazonaws.com/2020-05-31/function/arn:aws:cloudfront::&lt;account id&gt;:function/url-rewrite-single-page-apps&quot;,
+    &quot;ETag&quot;: &quot;EXXXXXXXXXXXX&quot;,
+    &quot;FunctionSummary&quot;: {
+        &quot;Name&quot;: &quot;url-rewrite-single-page-apps&quot;,
+        &quot;Status&quot;: &quot;UNPUBLISHED&quot;,
+        &quot;FunctionConfig&quot;: {
+            &quot;Comment&quot;: &quot;Function to redirect empty doc requests to index.html&quot;,
+            &quot;Runtime&quot;: &quot;cloudfront-js-1.0&quot;
+        },
+        &quot;FunctionMetadata&quot;: {
+            &quot;FunctionARN&quot;: &quot;arn:aws:cloudfront::&lt;account id&gt;:function/url-rewrite-single-page-apps&quot;,
+            &quot;Stage&quot;: &quot;DEVELOPMENT&quot;,
+            &quot;CreatedTime&quot;: &quot;2021-12-26T08:43:50.950Z&quot;,
+            &quot;LastModifiedTime&quot;: &quot;2021-12-26T08:43:50.950Z&quot;
+        }                     
+    }                    
+}
+</code></pre></div>
+<h3 id="test-the-function">Test the function<a class="headerlink" href="#test-the-function" title="Permanent link">&para;</a></h3>
+<p>To validate that the function is working as expected, you can use the JSON test objects in the <code>test-objects</code> directory. To test, use the <code>test-function</code> CLI command as shown in the following example:</p>
+<div class="highlight"><pre><span></span><code>$ aws cloudfront test-function --if-match &lt;ETag&gt; --name url-rewrite-single-page-apps --event-object fileb://url-rewrite-single-page-apps/test-objects/file-name-no-extension.json
+</code></pre></div>
+<p>If the function has been set up correctly, you should see the <code>uri</code> being updated to <code>index.html</code> in the <code>FunctionOutput</code> JSON object:
+<div class="highlight"><pre><span></span><code>{
+    &quot;TestResult&quot;: {
+        &quot;FunctionSummary&quot;: {
+            &quot;Name&quot;: &quot;url-rewrite-single-page-apps&quot;,
+            &quot;Status&quot;: &quot;UNPUBLISHED&quot;,
+            &quot;FunctionConfig&quot;: {
+                &quot;Comment&quot;: &quot;&quot;,
+                &quot;Runtime&quot;: &quot;cloudfront-js-1.0&quot;
+            },
+            &quot;FunctionMetadata&quot;: {
+                &quot;FunctionARN&quot;: &quot;arn:aws:cloudfront::1234567890:function/url-rewrite-single-page-apps&quot;,
+                &quot;Stage&quot;: &quot;DEVELOPMENT&quot;,
+                &quot;CreatedTime&quot;: &quot;2021-04-09T21:53:20.882000+00:00&quot;,
+                &quot;LastModifiedTime&quot;: &quot;2021-04-09T21:53:21.001000+00:00&quot;
+            }
+        },
+        &quot;ComputeUtilization&quot;: &quot;14&quot;,
+        &quot;FunctionExecutionLogs&quot;: [],
+        &quot;FunctionErrorMessage&quot;: &quot;&quot;,
+        &quot;FunctionOutput&quot;: &quot;{\&quot;request\&quot;:{\&quot;headers\&quot;:{\&quot;host\&quot;:{\&quot;value\&quot;:\&quot;www.example.com\&quot;},\&quot;accept\&quot;:{\&quot;value\&quot;:\&quot;text/html\&quot;}},\&quot;method\&quot;:\&quot;GET\&quot;,\&quot;querystring\&quot;:{\&quot;test\&quot;:{\&quot;value\&quot;:\&quot;true\&quot;},\&quot;arg\&quot;:{\&quot;value\&quot;:\&quot;val1\&quot;}},\&quot;uri\&quot;:\&quot;/blog/index.html\&quot;,\&quot;cookies\&quot;:{\&quot;loggedIn\&quot;:{\&quot;value\&quot;:\&quot;false\&quot;},\&quot;id\&quot;:{\&quot;value\&quot;:\&quot;CookeIdValue\&quot;}}}}&quot;
+    }
+}
+</code></pre></div></p>
+<h3 id="publish-the-function">Publish the function.<a class="headerlink" href="#publish-the-function" title="Permanent link">&para;</a></h3>
+<p>Please note that the JSON response states <code>"Status" : "UNPUBLISHED"</code>, so the next step is to publish the function.
+<div class="highlight"><pre><span></span><code>aws cloudfront publish-function --name url-rewrite-single-page-apps --if-match &lt;ETag&gt;
+</code></pre></div>
+And - if successful - JSON response should look similar to:</p>
+<div class="highlight"><pre><span></span><code>{
+    &quot;FunctionSummary&quot;: {
+        &quot;Name&quot;: &quot;url-rewrite-single-page-apps&quot;,
+        &quot;Status&quot;: &quot;UNASSOCIATED&quot;,
+        &quot;FunctionConfig&quot;: {
+            &quot;Comment&quot;: &quot;Function to redirect empty doc requests to index.html&quot;,
+            &quot;Runtime&quot;: &quot;cloudfront-js-1.0&quot;
+        },
+        &quot;FunctionMetadata&quot;: {
+            &quot;FunctionARN&quot;: &quot;arn:aws:cloudfront::&lt;account id&gt;:function/url-rewrite-single-page-apps&quot;,
+            &quot;Stage&quot;: &quot;LIVE&quot;,
+            &quot;CreatedTime&quot;: &quot;2021-12-26T08:47:42.111Z&quot;,
+            &quot;LastModifiedTime&quot;: &quot;2021-12-26T08:47:42.111Z&quot;
+        }
+    }
+}
+</code></pre></div>
+<h3 id="configuration-of-the-function">Configuration of the function.<a class="headerlink" href="#configuration-of-the-function" title="Permanent link">&para;</a></h3>
+<p>Since it's created and published, now it needs to be configured.</p>
+<p><div class="highlight"><pre><span></span><code>aws cloudfront get-distribution-config --id &lt;distribution name, NOT ETag!&gt; --output json &gt; dist-cfg.json
+</code></pre></div>
+Edit the <code>dist-cfg.json</code>:</p>
+<ul>
+<li>Change the <code>ETag</code> key to <code>IfMatch</code></li>
+<li>Modify <code>FunctionAssociation</code> to the following:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>&quot;FunctionAssociations&quot;: {
+                &quot;Quantity&quot;: 1,
+                &quot;Items&quot; : [     
+                        {
+                        &quot;EventType&quot; : &quot;viewer-request&quot;,
+                        &quot;FunctionARN&quot;:&quot;arn:aws:cloudfront::&lt;account id&gt;:function/url-rewrite-single-page-apps&quot;
+                }
+                ]
+
+            },
+</code></pre></div>
+<h3 id="modify-cloudfront-distribution-by-adding-etag">Modify CloudFront distribution by adding <code>ETag</code>.<a class="headerlink" href="#modify-cloudfront-distribution-by-adding-etag" title="Permanent link">&para;</a></h3>
+<p>Distributions-&gt;Distribution ID-&gt;Origins-&gt;Edit-&gt;Add custom header - optional
+Add <code>ETag</code>, value <code>EXXXXXXXXXXXX</code></p>
+<h3 id="update-the-distribution">Update the distribution<a class="headerlink" href="#update-the-distribution" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>aws cloudfront update-distribution --id  &lt;CF Distribution ID&gt; --cli-input-json fileb://dist-cfg.json
+</code></pre></div>
+<h3 id="other-considerations">Other considerations.<a class="headerlink" href="#other-considerations" title="Permanent link">&para;</a></h3>
+<p>Somewhere along the way you should have locked down your s3 bucket so it's not public, and add a policy (can be done automatically through CloudFront-&gt;Distributions-&gt;<id>-&gt;Edit Origin-&gt; s3 bucket access -&gt; Yes,use OAI (-&gt;create a new OAI)-&gt; Yes,update the bucket polcy) to allow for CloudFront access, so the Bucket Policy should look something like:</p>
+<p><div class="highlight"><pre><span></span><code>{
+    &quot;Version&quot;: &quot;2008-10-17&quot;,
+    &quot;Id&quot;: &quot;PolicyForCloudFrontPrivateContent&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;1&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Principal&quot;: {
+                &quot;AWS&quot;: &quot;arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity &lt;ID&gt;&quot;
+            },
+            &quot;Action&quot;: &quot;s3:GetObject&quot;,
+            &quot;Resource&quot;: &quot;arn:aws:s3:::&lt;bucket name&gt;/*&quot;
+        }
+    ]
+}
+</code></pre></div>
+(c) Dawid Krysiak https://itisoktoask.me/ </p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
